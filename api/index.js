@@ -7,6 +7,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(fileURLToPath(new URL("..", import.meta.url)), "public");
 const wordsFile = process.env.WORDBOOK_WORDS_FILE || join(fileURLToPath(new URL("..", import.meta.url)), "data", "words.json");
+const redisUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisStorageKey = process.env.WORDBOOK_STORAGE_KEY || "wordbook:spanish:words";
+const isVercel = Boolean(process.env.VERCEL);
 const port = process.env.PORT || 3000;
 
 const contentTypes = {
@@ -20,6 +24,8 @@ const contentTypes = {
   ".ttf": "font/ttf",
   ".webmanifest": "application/manifest+json; charset=utf-8",
 };
+
+class StorageConfigurationError extends Error {}
 
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8" });
@@ -45,6 +51,17 @@ async function readJsonBody(req) {
 }
 
 async function readWords() {
+  if (redisUrl && redisToken) {
+    const saved = await redisCommand(["GET", redisStorageKey]);
+
+    if (!saved) {
+      return [];
+    }
+
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : [];
+  }
+
   try {
     const file = await readFile(wordsFile, "utf8");
     const parsed = JSON.parse(file);
@@ -60,8 +77,37 @@ async function readWords() {
 }
 
 async function writeWords(words) {
+  if (redisUrl && redisToken) {
+    await redisCommand(["SET", redisStorageKey, JSON.stringify(words)]);
+    return;
+  }
+
+  if (isVercel) {
+    throw new StorageConfigurationError(
+      "Persistent storage is not configured. Add KV_REST_API_URL and KV_REST_API_TOKEN, or UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN, in Vercel."
+    );
+  }
+
   await mkdir(dirname(wordsFile), { recursive: true });
   await writeFile(wordsFile, JSON.stringify(words, null, 2), "utf8");
+}
+
+async function redisCommand(command) {
+  const response = await fetch(redisUrl, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${redisToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(command),
+  });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || data.error) {
+    throw new Error(data.error || "Redis storage request failed.");
+  }
+
+  return data.result;
 }
 
 function createWord(payload) {
@@ -145,7 +191,11 @@ async function serveWordsApi(req, res, pathname) {
     }
   } catch (error) {
     const statusCode = error instanceof SyntaxError ? 400 : 500;
-    const message = statusCode === 400 ? "Invalid JSON request body." : "WordBook storage failed.";
+    const message = error instanceof StorageConfigurationError
+      ? error.message
+      : statusCode === 400
+        ? "Invalid JSON request body."
+        : "WordBook storage failed.";
     sendJson(res, statusCode, { error: message });
     return true;
   }
