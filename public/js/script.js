@@ -9,6 +9,9 @@ const message = document.querySelector("#form-message");
 const list = document.querySelector("#word-list");
 const emptyState = document.querySelector("#empty-state");
 const totalCount = document.querySelector("#total-count");
+const addWordToggle = document.querySelector("#add-word-toggle");
+const wordDialog = document.querySelector("#word-dialog");
+const closeDialog = document.querySelector("#close-dialog");
 const rememberedToggle = document.querySelector("#remembered-toggle");
 
 let words = [];
@@ -108,6 +111,28 @@ function renderWordCard(word) {
   `;
 }
 
+function openWordDialog() {
+  message.textContent = "";
+
+  if (typeof wordDialog.showModal === "function") {
+    wordDialog.showModal();
+  } else {
+    wordDialog.setAttribute("open", "");
+  }
+
+  spanishInput.focus();
+}
+
+function closeWordDialog() {
+  if (wordDialog.open && typeof wordDialog.close === "function") {
+    wordDialog.close();
+  } else {
+    wordDialog.removeAttribute("open");
+  }
+
+  addWordToggle.focus();
+}
+
 async function loadWords() {
   message.textContent = "Loading words from the server...";
 
@@ -148,8 +173,8 @@ form.addEventListener("submit", async (event) => {
     showingRemembered = false;
     renderWords();
     form.reset();
-    spanishInput.focus();
     message.textContent = `${spanish} was saved on the server.`;
+    closeWordDialog();
   } catch (error) {
     message.textContent = error.message;
   } finally {
@@ -196,6 +221,15 @@ list.addEventListener("click", async (event) => {
 rememberedToggle.addEventListener("click", () => {
   showingRemembered = !showingRemembered;
   renderWords();
+});
+
+addWordToggle.addEventListener("click", openWordDialog);
+closeDialog.addEventListener("click", closeWordDialog);
+
+wordDialog.addEventListener("click", (event) => {
+  if (event.target === wordDialog) {
+    closeWordDialog();
+  }
 });
 
 loadWords();

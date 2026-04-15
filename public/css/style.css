@@ -207,20 +207,60 @@ button:disabled {
   font-size: 0.94rem;
 }
 
-.entry-band {
-  margin-top: 10px;
-  padding: 12px;
+.word-dialog {
+  width: min(calc(100% - 24px), 520px);
+  padding: 0;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
+  color: var(--ink);
   box-shadow: var(--shadow);
+}
+
+.word-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.46);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.close-dialog {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.close-dialog:hover,
+.close-dialog:focus-visible {
+  color: var(--ink);
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 1px;
 }
 
 .word-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  grid-template-columns: 1fr;
   gap: 8px;
   align-items: end;
+  padding: 12px;
 }
 
 .field-row {
@@ -229,7 +269,7 @@ button:disabled {
 }
 
 .field-row-wide {
-  grid-column: 1 / -2;
+  grid-column: auto;
 }
 
 .word-form label {
@@ -269,7 +309,6 @@ button:disabled {
 }
 
 .word-form button {
-  min-width: 98px;
   min-height: 44px;
   padding: 0 14px;
   border-radius: 8px;
@@ -303,26 +342,42 @@ button:disabled {
 
 .view-footer {
   position: fixed;
-  right: 12px;
   bottom: 12px;
-  left: 12px;
+  left: 50%;
   z-index: 20;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  width: min(calc(100% - 24px), 760px);
+  transform: translateX(-50%);
   justify-content: center;
   pointer-events: none;
 }
 
+.add-toggle,
 .view-toggle {
-  width: min(100%, 760px);
   min-height: 48px;
   padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--ink);
-  color: var(--paper);
   font-weight: 850;
   box-shadow: var(--shadow);
   pointer-events: auto;
+}
+
+.add-toggle {
+  background: var(--teal);
+  color: var(--button-ink);
+}
+
+.view-toggle {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.add-toggle:hover,
+.add-toggle:focus-visible {
+  background: var(--teal-dark);
 }
 
 .view-toggle[aria-pressed="true"] {
@@ -330,6 +385,7 @@ button:disabled {
   color: var(--button-ink);
 }
 
+.add-toggle:focus-visible,
 .view-toggle:focus-visible {
   outline: 4px solid var(--focus-ring);
   outline-offset: 2px;
@@ -355,25 +411,6 @@ button:disabled {
 
   .remember-button {
     width: 100%;
-  }
-
-  .entry-band {
-    position: sticky;
-    bottom: 64px;
-    margin-right: -10px;
-    margin-left: -10px;
-    border-right: 0;
-    border-bottom: 0;
-    border-left: 0;
-    border-radius: 8px 8px 0 0;
-  }
-
-  .word-form {
-    grid-template-columns: 1fr;
-  }
-
-  .field-row-wide {
-    grid-column: auto;
   }
 
   .word-form button {

@@ -51,7 +51,14 @@
         </div>
       </section>
 
-      <section class="entry-band" aria-label="Add a word">
+      <dialog class="word-dialog" id="word-dialog" aria-labelledby="dialog-title">
+        <div class="dialog-header">
+          <h2 id="dialog-title">Add word</h2>
+          <button class="close-dialog" id="close-dialog" type="button" aria-label="Close add word form">
+            Close
+          </button>
+        </div>
+
         <form class="word-form" id="word-form" autocomplete="off">
           <div class="field-row">
             <label for="spanish-word">Word</label>
@@ -88,9 +95,12 @@
           <button type="submit">Add word</button>
           <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
         </form>
-      </section>
+      </dialog>
 
       <nav class="view-footer" aria-label="Word views">
+        <button class="add-toggle" id="add-word-toggle" type="button">
+          Add word
+        </button>
         <button class="view-toggle" id="remembered-toggle" type="button">
           Remembered words
         </button>
