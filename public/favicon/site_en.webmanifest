@@ -1,7 +1,7 @@
 {
   "name": "WordBook",
   "short_name": "WordBook",
-  "description": "A personal Spanish wordbook for saving new words until you remember them.",
+  "description": "Un vocabulario personal de español para guardar palabras nuevas hasta recordarlas.",
   "start_url": "/",
   "icons": [
     {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,18 +19,18 @@
     <meta name="apple-mobile-web-app-title" content="WordBook" />
     <link rel="manifest" href="./favicon/site_en.webmanifest" />
 
-    <!-- Add meta tags for PWA installation -->
+    <!-- Metadatos para instalar la PWA -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
     <meta
       name="description"
-      content="A small personal Spanish wordbook for saving new words until you remember them."
+      content="Un vocabulario personal de español para guardar palabras nuevas hasta recordarlas."
     />
     <meta name="theme-color" content="#f7fbf8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101411" media="(prefers-color-scheme: dark)" />
-    <title>WordBook | Spanish Practice</title>
+    <title>WordBook | Práctica de español</title>
     <link rel="stylesheet" href="./css/style.css" />
     <script src="./js/script.js" defer></script>
   </head>
@@ -39,29 +39,29 @@
     <main class="app-shell">
       <header class="top-bar">
         <strong>WordBook</strong>
-        <span><span id="total-count">0</span> words</span>
+        <span><span id="total-count">0</span> palabras</span>
       </header>
 
-      <section class="list-band" aria-label="Words to remember">
+      <section class="list-band" aria-label="Palabras por recordar">
         <ul class="word-list" id="word-list"></ul>
 
         <div class="empty-state" id="empty-state">
-          <p>No saved words yet.</p>
-          <span>Add the next Spanish word you want to keep.</span>
+          <p>Todavía no hay palabras guardadas.</p>
+          <span>Añade la próxima palabra en español que quieras guardar.</span>
         </div>
       </section>
 
       <dialog class="word-dialog" id="word-dialog" aria-labelledby="dialog-title">
         <div class="dialog-header">
-          <h2 id="dialog-title">Add word</h2>
-          <button class="close-dialog" id="close-dialog" type="button" aria-label="Close add word form">
-            Close
+          <h2 id="dialog-title">Añadir palabra</h2>
+          <button class="close-dialog" id="close-dialog" type="button" aria-label="Cerrar formulario para añadir palabra">
+            Cerrar
           </button>
         </div>
 
         <form class="word-form" id="word-form" autocomplete="off">
           <div class="field-row">
-            <label for="spanish-word">Word</label>
+            <label for="spanish-word">Palabra</label>
             <input
               id="spanish-word"
               name="spanish-word"
@@ -72,18 +72,18 @@
           </div>
 
           <div class="field-row">
-            <label for="word-meaning">Meaning</label>
+            <label for="word-meaning">Significado</label>
             <input
               id="word-meaning"
               name="word-meaning"
               type="text"
-              placeholder="Hello"
+              placeholder="Saludo"
               required
             />
           </div>
 
           <div class="field-row field-row-wide">
-            <label for="word-note">Note</label>
+            <label for="word-note">Nota</label>
             <textarea
               id="word-note"
               name="word-note"
@@ -92,17 +92,17 @@
             ></textarea>
           </div>
 
-          <button type="submit">Add word</button>
+          <button type="submit">Añadir palabra</button>
           <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
         </form>
       </dialog>
 
-      <nav class="view-footer" aria-label="Word views">
+      <nav class="view-footer" aria-label="Vistas de palabras">
         <button class="add-toggle" id="add-word-toggle" type="button">
-          Add word
+          Añadir palabra
         </button>
         <button class="view-toggle" id="remembered-toggle" type="button">
-          Remembered words
+          Palabras recordadas
         </button>
       </nav>
     </main>

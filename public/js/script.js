@@ -22,7 +22,7 @@ function normalize(value) {
 }
 
 function formatDate(value) {
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("es", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -49,7 +49,7 @@ async function requestJson(url, options = {}) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
+    throw new Error(data.error || "La solicitud falló.");
   }
 
   return data;
@@ -65,29 +65,29 @@ function renderWords() {
   const visibleWords = getVisibleWords();
 
   totalCount.textContent = showingRemembered ? rememberedWords.length : activeWords.length;
-  rememberedToggle.textContent = showingRemembered ? "Current words" : "Remembered words";
+  rememberedToggle.textContent = showingRemembered ? "Palabras actuales" : "Palabras recordadas";
   rememberedToggle.setAttribute("aria-pressed", String(showingRemembered));
   list.innerHTML = visibleWords.map(renderWordCard).join("");
 
   emptyState.classList.toggle("is-visible", visibleWords.length === 0);
   emptyState.querySelector("p").textContent = showingRemembered
-    ? "No remembered words yet."
-    : "No saved words yet.";
+    ? "Todavía no hay palabras recordadas."
+    : "Todavía no hay palabras guardadas.";
   emptyState.querySelector("span").textContent = showingRemembered
-    ? "Tap Remembered on a word when it feels natural."
-    : "Add the next Spanish word you want to keep.";
+    ? "Marca una palabra como recordada cuando ya te salga natural."
+    : "Añade la próxima palabra en español que quieras guardar.";
 }
 
 function renderWordCard(word) {
   const note = word.note
     ? `<p class="note">${escapeHtml(word.note)}</p>`
     : "";
-  const actionText = word.remembered ? "Practica" : "Recuerda";
+  const actionText = word.remembered ? "Practicar" : "Recordada";
   const actionLabel = word.remembered
-    ? `Move ${word.spanish} back to current words`
-    : `Mark ${word.spanish} as remembered`;
+    ? `Mover ${word.spanish} a palabras actuales`
+    : `Marcar ${word.spanish} como recordada`;
   const rememberedDate = word.rememberedAt
-    ? `<time class="date" datetime="${escapeHtml(word.rememberedAt)}">Remembered ${formatDate(word.rememberedAt)}</time>`
+    ? `<time class="date" datetime="${escapeHtml(word.rememberedAt)}">Recordada el ${formatDate(word.rememberedAt)}</time>`
     : "";
 
   return `
@@ -96,7 +96,7 @@ function renderWordCard(word) {
         <h3 lang="es">${escapeHtml(word.spanish)}</h3>
         <p class="meaning">${escapeHtml(word.meaning)}</p>
         ${note}
-        <time class="date" datetime="${escapeHtml(word.createdAt)}">Added ${formatDate(word.createdAt)}</time>
+        <time class="date" datetime="${escapeHtml(word.createdAt)}">Añadida el ${formatDate(word.createdAt)}</time>
         ${rememberedDate}
       </div>
       <button
@@ -134,7 +134,7 @@ function closeWordDialog() {
 }
 
 async function loadWords() {
-  message.textContent = "Loading words from the server...";
+  message.textContent = "Cargando palabras del servidor...";
 
   try {
     const data = await requestJson(API_URL);
@@ -142,7 +142,7 @@ async function loadWords() {
     message.textContent = "";
   } catch {
     words = [];
-    message.textContent = "Could not load words from the server.";
+    message.textContent = "No se pudieron cargar las palabras del servidor.";
   }
 
   renderWords();
@@ -156,12 +156,12 @@ form.addEventListener("submit", async (event) => {
   const note = normalize(noteInput.value);
 
   if (!spanish || !meaning) {
-    message.textContent = "Add the word and its meaning first.";
+    message.textContent = "Añade primero la palabra y su significado.";
     return;
   }
 
   submitButton.disabled = true;
-  message.textContent = "Saving to the server...";
+  message.textContent = "Guardando en el servidor...";
 
   try {
     const data = await requestJson(API_URL, {
@@ -173,7 +173,7 @@ form.addEventListener("submit", async (event) => {
     showingRemembered = false;
     renderWords();
     form.reset();
-    message.textContent = `${spanish} was saved on the server.`;
+    message.textContent = `${spanish} se guardó en el servidor.`;
     closeWordDialog();
   } catch (error) {
     message.textContent = error.message;
@@ -209,11 +209,11 @@ list.addEventListener("click", async (event) => {
     words = words.map((item) => item.id === data.word.id ? data.word : item);
     renderWords();
     message.textContent = nextRemembered
-      ? `${word.spanish} was tagged as remembered.`
-      : `${word.spanish} is back in current words.`;
+      ? `${word.spanish} se marcó como recordada.`
+      : `${word.spanish} volvió a palabras actuales.`;
   } catch (error) {
     button.disabled = false;
-    button.textContent = word.remembered ? "Practica" : "Recuerda";
+    button.textContent = word.remembered ? "Practicar" : "Recordada";
     message.textContent = error.message;
   }
 });

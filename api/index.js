@@ -43,7 +43,7 @@ async function readJsonBody(req) {
     body += chunk;
 
     if (body.length > 10000) {
-      throw new Error("Request body is too large.");
+      throw new Error("El cuerpo de la solicitud es demasiado grande.");
     }
   }
 
@@ -96,7 +96,7 @@ async function writeWords(words) {
 
   if (isVercel) {
     throw new StorageConfigurationError(
-      "Persistent storage is not configured. Add KV_REST_API_URL and KV_REST_API_TOKEN, or UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN, in Vercel."
+      "El almacenamiento persistente no está configurado. Añade KV_REST_API_URL y KV_REST_API_TOKEN, o UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN, en Vercel."
     );
   }
 
@@ -116,7 +116,7 @@ async function redisCommand(command) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok || data.error) {
-    throw new Error(data.error || "Redis storage request failed.");
+    throw new Error(data.error || "Falló la solicitud al almacenamiento Redis.");
   }
 
   return data.result;
@@ -164,7 +164,7 @@ async function serveWordsApi(req, res, pathname) {
       const word = createWord(payload);
 
       if (!word) {
-        sendJson(res, 400, { error: "Spanish word and meaning are required." });
+        sendJson(res, 400, { error: "La palabra en español y el significado son obligatorios." });
         return true;
       }
 
@@ -174,7 +174,7 @@ async function serveWordsApi(req, res, pathname) {
       );
 
       if (alreadySaved) {
-        sendJson(res, 409, { error: "That word is already in your WordBook." });
+        sendJson(res, 409, { error: "Esa palabra ya está en tu WordBook." });
         return true;
       }
 
@@ -191,7 +191,7 @@ async function serveWordsApi(req, res, pathname) {
       const wordIndex = words.findIndex((word) => word.id === id);
 
       if (wordIndex === -1) {
-        sendJson(res, 404, { error: "Word not found." });
+        sendJson(res, 404, { error: "No se encontró la palabra." });
         return true;
       }
 
@@ -215,7 +215,7 @@ async function serveWordsApi(req, res, pathname) {
       const nextWords = words.filter((word) => word.id !== id);
 
       if (nextWords.length === words.length) {
-        sendJson(res, 404, { error: "Word not found." });
+        sendJson(res, 404, { error: "No se encontró la palabra." });
         return true;
       }
 
@@ -225,7 +225,7 @@ async function serveWordsApi(req, res, pathname) {
     }
 
     if (pathname.startsWith("/api/words")) {
-      sendJson(res, 405, { error: "Method not allowed." });
+      sendJson(res, 405, { error: "Método no permitido." });
       return true;
     }
   } catch (error) {
@@ -233,8 +233,8 @@ async function serveWordsApi(req, res, pathname) {
     const message = error instanceof StorageConfigurationError
       ? error.message
       : statusCode === 400
-        ? "Invalid JSON request body."
-        : "WordBook storage failed.";
+        ? "El cuerpo de la solicitud no es JSON válido."
+        : "Falló el almacenamiento de WordBook.";
     sendJson(res, statusCode, { error: message });
     return true;
   }
@@ -263,7 +263,7 @@ async function serve(req, res) {
     res.end(file);
   } catch {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Not found");
+    res.end("No encontrado");
   }
 }
 
@@ -271,6 +271,6 @@ export default serve;
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   createServer(serve).listen(port, () => {
-    console.log(`WordBook running at http://localhost:${port}`);
+    console.log(`WordBook disponible en http://localhost:${port}`);
   });
 }
