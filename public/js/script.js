@@ -9,8 +9,10 @@ const message = document.querySelector("#form-message");
 const list = document.querySelector("#word-list");
 const emptyState = document.querySelector("#empty-state");
 const totalCount = document.querySelector("#total-count");
+const rememberedToggle = document.querySelector("#remembered-toggle");
 
 let words = [];
+let showingRemembered = false;
 
 function normalize(value) {
   return value.trim().replace(/\s+/g, " ");
@@ -50,35 +52,57 @@ async function requestJson(url, options = {}) {
   return data;
 }
 
-function renderWords() {
-  totalCount.textContent = words.length;
-  list.innerHTML = words.map(renderWordCard).join("");
+function getVisibleWords() {
+  return words.filter((word) => Boolean(word.remembered) === showingRemembered);
+}
 
-  emptyState.classList.toggle("is-visible", words.length === 0);
-  emptyState.querySelector("p").textContent = "No saved words yet.";
-  emptyState.querySelector("span").textContent = "Add the next Spanish word you want to keep.";
+function renderWords() {
+  const activeWords = words.filter((word) => !word.remembered);
+  const rememberedWords = words.filter((word) => word.remembered);
+  const visibleWords = getVisibleWords();
+
+  totalCount.textContent = showingRemembered ? rememberedWords.length : activeWords.length;
+  rememberedToggle.textContent = showingRemembered ? "Current words" : "Remembered words";
+  rememberedToggle.setAttribute("aria-pressed", String(showingRemembered));
+  list.innerHTML = visibleWords.map(renderWordCard).join("");
+
+  emptyState.classList.toggle("is-visible", visibleWords.length === 0);
+  emptyState.querySelector("p").textContent = showingRemembered
+    ? "No remembered words yet."
+    : "No saved words yet.";
+  emptyState.querySelector("span").textContent = showingRemembered
+    ? "Tap Remembered on a word when it feels natural."
+    : "Add the next Spanish word you want to keep.";
 }
 
 function renderWordCard(word) {
   const note = word.note
     ? `<p class="note">${escapeHtml(word.note)}</p>`
     : "";
+  const actionText = word.remembered ? "Practice again" : "Remembered";
+  const actionLabel = word.remembered
+    ? `Move ${word.spanish} back to current words`
+    : `Mark ${word.spanish} as remembered`;
+  const rememberedDate = word.rememberedAt
+    ? `<time class="date" datetime="${escapeHtml(word.rememberedAt)}">Remembered ${formatDate(word.rememberedAt)}</time>`
+    : "";
 
   return `
-    <li class="word-card" data-id="${escapeHtml(word.id)}">
+    <li class="word-card ${word.remembered ? "is-remembered" : ""}" data-id="${escapeHtml(word.id)}">
       <div>
         <h3 lang="es">${escapeHtml(word.spanish)}</h3>
         <p class="meaning">${escapeHtml(word.meaning)}</p>
         ${note}
         <time class="date" datetime="${escapeHtml(word.createdAt)}">Added ${formatDate(word.createdAt)}</time>
+        ${rememberedDate}
       </div>
       <button
         class="remember-button"
         type="button"
         data-action="remember"
-        aria-label="Remove ${escapeHtml(word.spanish)} from WordBook"
+        aria-label="${escapeHtml(actionLabel)}"
       >
-        Remembered
+        ${actionText}
       </button>
     </li>
   `;
@@ -121,6 +145,7 @@ form.addEventListener("submit", async (event) => {
     });
 
     words = [data.word, ...words];
+    showingRemembered = false;
     renderWords();
     form.reset();
     spanishInput.focus();
@@ -142,24 +167,35 @@ list.addEventListener("click", async (event) => {
   const card = button.closest(".word-card");
   const word = words.find((item) => item.id === card.dataset.id);
 
+  if (!word) {
+    return;
+  }
+
+  const nextRemembered = !word.remembered;
+
   button.disabled = true;
-  button.textContent = "Removing...";
+  button.textContent = nextRemembered ? "Saving..." : "Moving...";
 
   try {
-    await requestJson(`${API_URL}/${encodeURIComponent(card.dataset.id)}`, {
-      method: "DELETE",
+    const data = await requestJson(`${API_URL}/${encodeURIComponent(card.dataset.id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ remembered: nextRemembered }),
     });
-    words = words.filter((item) => item.id !== card.dataset.id);
+    words = words.map((item) => item.id === data.word.id ? data.word : item);
     renderWords();
-
-    if (word) {
-      message.textContent = `${word.spanish} was removed from the server.`;
-    }
+    message.textContent = nextRemembered
+      ? `${word.spanish} was tagged as remembered.`
+      : `${word.spanish} is back in current words.`;
   } catch (error) {
     button.disabled = false;
-    button.textContent = "Remembered";
+    button.textContent = word.remembered ? "Practice again" : "Remembered";
     message.textContent = error.message;
   }
+});
+
+rememberedToggle.addEventListener("click", () => {
+  showingRemembered = !showingRemembered;
+  renderWords();
 });
 
 loadWords();

@@ -59,14 +59,14 @@ async function readWords() {
     }
 
     const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed : [];
+    return normalizeWords(parsed);
   }
 
   try {
     const file = await readFile(wordsFile, "utf8");
     const parsed = JSON.parse(file);
 
-    return Array.isArray(parsed) ? parsed : [];
+    return normalizeWords(parsed);
   } catch (error) {
     if (error.code === "ENOENT") {
       return [];
@@ -74,6 +74,18 @@ async function readWords() {
 
     throw error;
   }
+}
+
+function normalizeWords(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.map((word) => ({
+    ...word,
+    remembered: Boolean(word.remembered),
+    rememberedAt: word.rememberedAt || null,
+  }));
 }
 
 async function writeWords(words) {
@@ -125,6 +137,8 @@ function createWord(payload) {
     meaning,
     note,
     createdAt: new Date().toISOString(),
+    remembered: false,
+    rememberedAt: null,
   };
 }
 
@@ -167,6 +181,31 @@ async function serveWordsApi(req, res, pathname) {
       const nextWords = [word, ...words];
       await writeWords(nextWords);
       sendJson(res, 201, { word });
+      return true;
+    }
+
+    if (req.method === "PATCH" && pathname.startsWith("/api/words/")) {
+      const id = decodeURIComponent(pathname.replace("/api/words/", ""));
+      const payload = await readJsonBody(req);
+      const words = await readWords();
+      const wordIndex = words.findIndex((word) => word.id === id);
+
+      if (wordIndex === -1) {
+        sendJson(res, 404, { error: "Word not found." });
+        return true;
+      }
+
+      const remembered = Boolean(payload.remembered);
+      const updatedWord = {
+        ...words[wordIndex],
+        remembered,
+        rememberedAt: remembered ? new Date().toISOString() : null,
+      };
+      const nextWords = [...words];
+      nextWords[wordIndex] = updatedWord;
+
+      await writeWords(nextWords);
+      sendJson(res, 200, { word: updatedWord });
       return true;
     }
 
