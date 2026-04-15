@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="./favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+    <link rel="shortcut icon" href="./favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./favicon/apple-touch-icon.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="WordBook" />
+    <link rel="manifest" href="./favicon/site_en.webmanifest" />
+
+    <!-- Add meta tags for PWA installation -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <meta
+      name="description"
+      content="A small personal Spanish wordbook for saving new words until you remember them."
+    />
+    <title>WordBook | Spanish Practice</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/script.js" defer></script>
+  </head>
+
+  <body>
+    <main class="app-shell">
+      <header class="top-bar">
+        <strong>WordBook</strong>
+        <span><span id="total-count">0</span> words</span>
+      </header>
+
+      <section class="list-band" aria-label="Words to remember">
+        <ul class="word-list" id="word-list"></ul>
+
+        <div class="empty-state" id="empty-state">
+          <p>No saved words yet.</p>
+          <span>Add the next Spanish word you want to keep.</span>
+        </div>
+      </section>
+
+      <section class="entry-band" aria-label="Add a word">
+        <form class="word-form" id="word-form" autocomplete="off">
+          <div class="field-row">
+            <label for="spanish-word">Word</label>
+            <input
+              id="spanish-word"
+              name="spanish-word"
+              type="text"
+              placeholder="Hola"
+              required
+            />
+          </div>
+
+          <div class="field-row">
+            <label for="word-meaning">Meaning</label>
+            <input
+              id="word-meaning"
+              name="word-meaning"
+              type="text"
+              placeholder="Hello"
+              required
+            />
+          </div>
+
+          <div class="field-row field-row-wide">
+            <label for="word-note">Note</label>
+            <textarea
+              id="word-note"
+              name="word-note"
+              rows="2"
+              placeholder="Hola, ¿cómo estás?"
+            ></textarea>
+          </div>
+
+          <button type="submit">Add word</button>
+          <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

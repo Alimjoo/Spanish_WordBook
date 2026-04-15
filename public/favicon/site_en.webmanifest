@@ -1,0 +1,23 @@
+{
+  "name": "WordBook",
+  "short_name": "WordBook",
+  "description": "A personal Spanish wordbook for saving new words until you remember them.",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#0f8f7d",
+  "background_color": "#fbfdfb",
+  "display": "standalone"
+}
