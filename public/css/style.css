@@ -115,8 +115,8 @@ button:disabled {
 
 .word-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 74px;
+  gap: 8px;
   align-items: start;
   min-height: 84px;
   padding: 12px;
@@ -162,15 +162,16 @@ button:disabled {
 }
 
 .remember-button {
-  min-width: 86px;
-  min-height: 38px;
-  padding: 0 10px;
+  width: 74px;
+  min-height: 34px;
+  padding: 0 7px;
   border: 1px solid rgba(217, 79, 69, 0.35);
   border-radius: 8px;
   background: var(--danger-surface);
   color: var(--coral);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 850;
+  justify-self: end;
 }
 
 .remember-button:hover,
@@ -405,12 +406,8 @@ button:disabled {
   }
 
   .word-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) 74px;
     min-height: 0;
-  }
-
-  .remember-button {
-    width: 100%;
   }
 
   .word-form button {

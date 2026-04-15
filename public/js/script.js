@@ -82,7 +82,7 @@ function renderWordCard(word) {
   const note = word.note
     ? `<p class="note">${escapeHtml(word.note)}</p>`
     : "";
-  const actionText = word.remembered ? "Practice again" : "Remembered";
+  const actionText = word.remembered ? "Practica" : "Recuerda";
   const actionLabel = word.remembered
     ? `Move ${word.spanish} back to current words`
     : `Mark ${word.spanish} as remembered`;
@@ -199,7 +199,7 @@ list.addEventListener("click", async (event) => {
   const nextRemembered = !word.remembered;
 
   button.disabled = true;
-  button.textContent = nextRemembered ? "Saving..." : "Moving...";
+  button.textContent = nextRemembered ? "..." : "...";
 
   try {
     const data = await requestJson(`${API_URL}/${encodeURIComponent(card.dataset.id)}`, {
@@ -213,7 +213,7 @@ list.addEventListener("click", async (event) => {
       : `${word.spanish} is back in current words.`;
   } catch (error) {
     button.disabled = false;
-    button.textContent = word.remembered ? "Practice again" : "Remembered";
+    button.textContent = word.remembered ? "Practica" : "Recuerda";
     message.textContent = error.message;
   }
 });
